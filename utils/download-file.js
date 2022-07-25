@@ -1,6 +1,6 @@
-const download = (filename = 'download') => {
+const download = (file, filename = 'download') => {
     const link = document.createElement('a');
-    link.href = '/highlight.pdf';
+    link.href = window.URL.createObjectURL(file);
     link.download = `${filename}.pdf`;
     link.click();
     link.remove();

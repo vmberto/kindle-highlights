@@ -15,7 +15,7 @@ export const UploadContainer = styled.main`
   padding: 15px;
 `;
 
-export const UploadButton = styled.button`
+export const Button = styled.button`
   background: #4b65ff;
   padding: 15px;
   border-radius: 40px;

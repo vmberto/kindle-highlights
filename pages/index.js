@@ -1,12 +1,13 @@
 import Head from "next/head";
 import {useRef, useState} from "react";
 import download from "../utils/download-file";
-import {UploadButton, UploadContainer} from "../styles/upload";
+import {Button, UploadContainer} from "../styles/upload";
 import {Container} from "../styles/globals";
 
 export default function Home() {
     const inputRef = useRef();
     const [filename, setFilename] = useState();
+    const [mountedFile, setMountedFile] = useState();
 
     const onImport = async () => {
         const reader = new FileReader();
@@ -15,13 +16,15 @@ export default function Home() {
         setFilename(file.name)
 
         reader.onloadend = async ({ target: { result: csv } }) => {
-            await fetch("/api/highlight", {
+            const response = await fetch("/api/highlight", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ csv }),
             });
+            const file = await response.blob();
+            setMountedFile(file);
         };
     }
 
@@ -30,7 +33,7 @@ export default function Home() {
     }
 
     const onClickToDownload = async () => {
-        download()
+        download(mountedFile, filename)
     }
 
     return (
@@ -45,10 +48,10 @@ export default function Home() {
 
             <UploadContainer>
 
-                <UploadButton onClick={onClickToUpload}>Upload</UploadButton>
+                <Button onClick={onClickToUpload}>Upload</Button>
                 <h3>{filename}</h3>
                 <input style={{ display: 'none' }} ref={inputRef} type="file" name="file" onChange={onImport} />
-                <UploadButton onClick={onClickToDownload}>Download</UploadButton>
+                {mountedFile && <Button onClick={onClickToDownload}>Download</Button>}
 
             </UploadContainer>
             </Container>
