@@ -23,7 +23,7 @@ export const Button = styled.button`
   border: none;
   cursor: pointer;
   transition: opacity .5s;
-  
+
   :hover {
     opacity: .8;
   }

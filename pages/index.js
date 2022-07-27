@@ -1,67 +1,15 @@
 import Head from "next/head";
-import {useRef, useState} from "react";
-import download from "../utils/download-file";
-import {Button, UploadContainer} from "../styles/upload";
-import {Container} from "../styles/globals";
+import Upload from "../components/Upload";
 
-export default function Home() {
-    const inputRef = useRef();
-    const [filename, setFilename] = useState();
-    const [mountedFile, setMountedFile] = useState();
+const Home = () => (
+    <>
+        <Head>
+            <title>Kindle Highlights</title>
+            <meta name="description" content="Generate custom kindle highlights from CSV"/>
+            <link rel="icon" href="/favicon.ico"/>
+        </Head>
+        <Upload/>
+    </>
+);
 
-    const onImport = async () => {
-        const reader = new FileReader();
-        const { files: [ file ] } = inputRef?.current;
-        reader.readAsText(file);
-        setFilename(file.name)
-        setMountedFile(null);
-
-
-        reader.onloadend = async ({ target: { result: csv } }) => {
-            const response = await fetch("/api/highlight", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ csv }),
-            });
-            const file = await response.blob();
-            setMountedFile(file);
-        };
-    }
-
-    const onClickToUpload = () => {
-        inputRef.current.click();
-    }
-
-    const onClickToDownload = async () => {
-        download(mountedFile, filename)
-    }
-
-    return (
-        <>
-            <Head>
-                <title>Kindle Highlights</title>
-                <meta name="description" content="Generate custom kindle highlights from CSV" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-
-            <Container>
-
-            <UploadContainer>
-
-                <Button onClick={onClickToUpload}>Upload</Button>
-                <h3>{filename}</h3>
-                <input style={{ display: 'none' }} ref={inputRef} type="file" name="file" onChange={onImport} />
-                {mountedFile && <Button onClick={onClickToDownload}>Download</Button>}
-
-            </UploadContainer>
-
-            </Container>
-
-            <footer>
-
-            </footer>
-        </>
-    );
-}
+export default Home;
