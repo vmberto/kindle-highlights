@@ -7,7 +7,7 @@ import {load} from 'cheerio';
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
-        const template = path.join(process.cwd(), 'utils', '/template.ejs');
+        const template = '/template.ejs';
         const parsedCSV = parseCSV(req.body.csv);
 
         const amazonBookHtml = await axios(parsedCSV.bookLink);
