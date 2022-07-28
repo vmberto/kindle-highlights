@@ -21,7 +21,12 @@ const parseCSV = (text) => {
         const [first, second, third, ...rest] = row[0].split(',');
         row[0] = row[0].replace(",,,", "")
         if (second) {
-            row[0] = [first.replace(/"/g, ""), second.replace(/"/g, ""), third.replace(/"/g, ""), rest.join(',').replace(/"/g, "")]
+            row[0] = [
+                first,
+                second,
+                third,
+                rest.join(',')
+            ].map(item => item.replace(/"/g, ""))
         }
     });
 
@@ -39,7 +44,7 @@ const parseCSV = (text) => {
     })
 
 
-    return { bookTitle, author, bookLink, highlight };
+    return {bookTitle, author, bookLink, highlight};
 }
 
 export default parseCSV;
