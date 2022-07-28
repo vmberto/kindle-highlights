@@ -15,6 +15,7 @@ export default async function handler(req, res) {
         const bookCover = $('img')[1].attribs.src;
 
         ejs.renderFile(template, {students: parsedCSV.highlight, bookCover}, (err, data) => {
+            console.log(data)
             if (err) {
                 res.send(err);
             } else {
