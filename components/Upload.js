@@ -1,21 +1,36 @@
 import {useRef, useState} from "react";
 import download from "../utils/download-file";
-import {Button, UploadContainer} from "../styles/upload";
+import {
+    BrowseFilesButton,
+    Button,
+    DragAndDropSpace,
+    LabelFileUpload,
+    PanelTitle,
+    UploadContainer
+} from "../styles/upload";
 import {Container} from "../styles/globals";
+import useDragAndDrop from "../hooks/UseDragAndDrop";
 
 export default function Upload() {
     const inputRef = useRef();
     const [filename, setFilename] = useState();
     const [mountedFile, setMountedFile] = useState();
+    const [invalidFile, setInvalidFile] = useState(false);
     const [generatingFile, setGeneratingFile] = useState(false);
+    const {dragActive, handleDragFile, handleDropFile} = useDragAndDrop();
 
-    const onImport = async () => {
+    const onUpload = async (draggedFile = null) => {
         const reader = new FileReader();
-        const {files: [file]} = inputRef?.current;
-        reader.readAsText(file);
-        setFilename(file.name)
+        if ('File' in window && draggedFile instanceof File) {
+            reader.readAsText(draggedFile);
+            setFilename(draggedFile.name)
+        } else {
+            const {files: [file]} = inputRef?.current;
+            reader.readAsText(file);
+            setFilename(file.name)
+        }
         setMountedFile(null);
-
+        setInvalidFile(false);
 
         reader.onloadend = async ({target: {result: csv}}) => {
             setGeneratingFile(true);
@@ -32,27 +47,35 @@ export default function Upload() {
         };
     }
 
-    const onClickToUpload = () => {
-        inputRef.current.click();
-    }
-
-    const onClickToDownload = async () => {
-        download(mountedFile, filename)
-    }
 
     return (
         <Container>
 
-            <UploadContainer>
+            <UploadContainer onDragEnter={handleDragFile}>
 
-                <Button onClick={onClickToUpload}>Upload</Button>
+                <PanelTitle>Kindle Highlights</PanelTitle>
+
+                <LabelFileUpload onClick={() => inputRef.current.click()} dragActive={dragActive}>
+                    <div>
+                        <p>Drag and drop your file here or <BrowseFilesButton
+                            id="browse-files-anchor">browse</BrowseFilesButton></p>
+                    </div>
+                </LabelFileUpload>
+
                 <h3>{filename}</h3>
-                <input style={{display: 'none'}} ref={inputRef} type="file" name="file" onChange={onImport}/>
+
                 {generatingFile && <h6>Gerando arquivo...</h6>}
-                {mountedFile && <Button onClick={onClickToDownload}>Download</Button>}
+                {invalidFile && <h6>Arquivo Inválido</h6>}
+
+                {mountedFile && <Button onClick={() => download(mountedFile, filename)}>Download</Button>}
+
+                {dragActive && <DragAndDropSpace onDragEnter={handleDragFile} onDragLeave={handleDragFile}
+                                                 onDragOver={handleDragFile}
+                                                 onDrop={handleDropFile(onUpload)}></DragAndDropSpace>}
 
             </UploadContainer>
 
+            <input style={{display: 'none'}} ref={inputRef} type="file" name="file" onChange={onUpload}/>
         </Container>
     );
 }
