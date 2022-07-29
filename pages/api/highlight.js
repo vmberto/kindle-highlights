@@ -1,15 +1,11 @@
 import parseCSV from "../../utils/parse-csv";
-import ejs from "ejs";
-import pdf from "html-pdf";
 import axios from 'axios';
 import {load} from 'cheerio';
 import pdfHelper from '../../utils/pdf-helper'
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
-        const template = process.cwd() + '/public/template.ejs';
         const parsedCSV = parseCSV(req.body.csv);
-
         const amazonBookHtml = await axios(parsedCSV.bookLink);
         const $ = load(amazonBookHtml.data);
         const bookCover = $('img')[1].attribs.src;

@@ -17,7 +17,9 @@ const componentToPDFBuffer = (props) => {
             timeout: 30000,
         };
 
-        pdf.create(html, options).toBuffer((err, buffer) => {
+        pdf.create(html, {
+            ...options, phantomPath: process.cwd() + "/node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs"
+        }).toBuffer((err, buffer) => {
             if (err) {
                 return reject(err);
             }
