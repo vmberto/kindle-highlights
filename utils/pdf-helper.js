@@ -18,7 +18,7 @@ const componentToPDFBuffer = (props) => {
         };
 
         pdf.create(html, {
-            ...options, phantomPath: process.cwd() + "/node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs"
+            ...options, phantomPath: process.cwd() + "/node_modules/phantomjs-prebuilt/phantomjs"
         }).toBuffer((err, buffer) => {
             if (err) {
                 return reject(err);
